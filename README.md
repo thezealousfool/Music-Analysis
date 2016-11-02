@@ -11,12 +11,20 @@ sudo apt-get install ffmpeg python-numpy python-matplotlib gnuplot gnuplot-x11 p
 
 sudo pip install pydub
 ```
+In order to run the youtube mp3 extraction script file the following additional dependency is required
+```
+sudo apt-get install youtube-dl
+```
 
 ### In Manjaro(or other Arch base systems)
 ```
 sudo pacman -S ffmpeg python-numpy python-matplotlib gnuplot python-pip
 
 sudo pip install pydub
+```
+In order to run the youtube mp3 extraction script file the following additional dependency is required
+```
+sudo pacman -S youtube-dl
 ```
 
 
