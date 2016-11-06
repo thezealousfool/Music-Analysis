@@ -2,6 +2,8 @@ from __future__ import print_function
 
 from pydub import AudioSegment
 
+from matplotlib import pyplot as plt
+
 import numpy as np
 import math
 import sys
@@ -39,7 +41,8 @@ fps = song.frame_rate
 channels = song.split_to_mono()
 
 # Initializing plot data array
-plot_data = [0] * 22000
+# plot_data = [(0.0, 0.0)] * (t_s * 10)
+plot_data = [0.0] * (t_s * 10)
 
 for i in range(t_s * 10):
     # array.array object of song
@@ -51,50 +54,38 @@ for i in range(t_s * 10):
     # getting the frequencies
     freq_data = np.fft.rfftfreq(res_fft.size)
 
+    max_amp = 0
+    max_freq = 0
+
     # populating plot data
     for vfft, freq in zip(res_fft, freq_data):
         hz = int(abs(freq * fps))
-        if hz > 20 and hz < 22000:
+        if hz > 20 and hz < 16000:
             amp = np.abs(vfft)
-            if amp > 0:
-                plot_data[hz] = max(20 * math.log10(amp), plot_data[hz])
+            if amp > max_amp:
+                max_amp = amp
+                max_freq = hz
 
-# output file name
-if argv_l < 3:
-    print()
-    print("Output file name not specified!")
-    print("Defaulting to 'spectrum.plot'")
-    print()
-    file_name = 'spectrum.plot'
-else:
-    file_name = sys.argv[2]
+    # plot_data[i] = (20 * math.log10(max_amp), max_freq)
+    plot_data[i] = max_freq
 
-# opening output file
-f = open(file_name, 'w')
+plt.plot(plot_data)
+plt.show()
 
-# writing plot data
-for index, item in enumerate(plot_data):
-    if(item > 0):
-        f.write(repr(index) + " " + repr(item) + "\n")
+# # output file name
+# if argv_l < 3:
+#     print()
+#     print("Output file name not specified!")
+#     print("Defaulting to 'spectrum.plot'")
+#     print()
+#     file_name = 'spectrum.plot'
+# else:
+#     file_name = sys.argv[2]
 
-# # play Song
-# import pyaudio
+# # opening output file
+# f = open(file_name, 'w')
 
-# p = pyaudio.PyAudio()
-
-# stream = p.open(format=p.get_format_from_width(song.sample_width),
-#                 channels=1,
-#                 rate=song.frame_rate,
-#                 output=True)
-
-# for i in range(t_s):
-#     print (repr(i / 3600).zfill(2), end=':')
-#     print (repr((i % 3600) / 60).zfill(2), end=':')
-#     print (repr(i % 60).zfill(2), end=' ')
-#     print ("/", end=' ')
-#     print (repr(t_s / 3600).zfill(2), end=':')
-#     print (repr((t_s % 3600) / 60).zfill(2), end=':')
-#     print (repr(t_s % 60).zfill(2), end='\r')
-#     sys.stdout.flush()
-#     frame = channels[0][i * 1000:(i + 1) * 1000].raw_data
-#     stream.write(frame)
+# # writing plot data
+# for index, item in enumerate(plot_data):
+#     if(item > 0):
+#         f.write(repr(index) + " " + repr(item) + "\n")
